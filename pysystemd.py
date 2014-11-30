@@ -12,6 +12,18 @@ public Variant call_sync (string method_name, Variant? parameters, DBusCallFlags
 '''
 
 class Unit:
+    '''
+    name - The primary unit name as string
+    descrip - The human readable description string
+    load -The load state (i.e. whether the unit file has been loaded successfully)
+    active -The active state (i.e. whether the unit is currently started or not)
+    sub - The sub state (a more fine-grained version of the active state that is specific to the unit type, which the active state is not)
+    _ - A unit that is being followed in its state by this unit, if there is any, otherwise the empty string.
+    interface - The unit object path
+    _ - If there is a job queued for the job unit the numeric job id, 0 otherwise
+    _ - The job type as string
+    _ - The job object path
+    '''
     def __init__(self, unit, proxy):
         self.data = unit
         self.proxy = proxy
@@ -20,7 +32,7 @@ class Unit:
     def start(self): # TODO: add JOBMODE flag
         self.proxy.call_sync('StartUnit', GLib.Variant('(ss)', (self.name, 'replace',)), Gio.DBusCallFlags.NONE, -1, None)
 
-    def stop(self): 
+    def stop(self):
         self.proxy.call_sync('StopUnit', GLib.Variant('(ss)', (self.name, 'replace',)), Gio.DBusCallFlags.NONE, -1, None)
 
     def __repr__(self):
