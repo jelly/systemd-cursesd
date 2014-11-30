@@ -38,9 +38,6 @@ class Unit:
     def __repr__(self):
         return '%s(%s)' % (self.name, self.descrip)
 
-
-
-
 class SystemdManager:
     def __init__(self):
         self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
@@ -55,3 +52,27 @@ class SystemdManager:
         unitsvariant = self.proxy.call_sync('ListUnitFiles', None, Gio.DBusCallFlags.NONE, -1, None)
         (units,) = unitsvariant.unpack() # Returns a list with tuples
         return units
+
+    # TODO: Or Unit?
+    # TODO: Flags should be defined
+    def startunit(self, name, flags='replace'):
+        self.proxy.call_sync('StartUnit', GLib.Variant('(ss)', (name, 'replace',)), Gio.DBusCallFlags.NONE, -1, None)
+
+    # TODO: Or Unit?
+    def stopunit(self, name, flags='replace'):
+        self.proxy.call_sync('StopUnit', GLib.Variant('(ss)', (name, 'replace',)), Gio.DBusCallFlags.NONE, -1, None)
+
+    def getunit(self, name):
+        try:
+            return self.proxy.call_sync('GetUnit', GLib.Variant('(s)', (name, )), Gio.DBusCallFlags.NONE, -1, None)
+        except GLib.Error:
+            print 'Unit %s not loaded' % (name)
+            return None
+
+    def loadunit(self, name):
+        try:
+            return self.proxy.call_sync('GetUnit', GLib.Variant('(s)', (name, )), Gio.DBusCallFlags.NONE, -1, None)
+        except GLib.Error:
+            print 'Unit %s not loaded' % (name)
+            return None
+
